@@ -9,9 +9,11 @@
    2. Depth First Search
    3. Detect cycle in an undirected graph (Bfs)
    4. Surrounding region (Dfs)
-   5. Flood fill (Dfs - what we are using / Bfs)
+   5. Flood fill (Dfs - This is what we are using / Bfs)
    6. Detect Cycle in Directed graph
-   7. Toppological Sort
+   7. Toppological Sort (DFS)
+   8. Kahn's algorithm (BFS)
+   9. Shortest path finding in Undirected Graph (Using BFS)
 
  */
 
@@ -38,14 +40,21 @@ public class Main {
 
         boolean visited[] = new boolean[v1];
 
+//----------------------------------------------------------------------------
+//        1. Beadth First Search
+
         System.out.println("1. Bredth First Search Of This Adj List : " + adj1);
         System.out.println(bfs(visited, adj1)+"\n");
 
+//----------------------------------------------------------------------------
+//        2. Depth First Search
         boolean visited1[] = new boolean[v1];
         System.out.println("2. Depth First Search Of This Adj List : " + adj1);
         System.out.println(dfs(0, visited1, adj1, new ArrayList<>())+ "\n");
 
 
+//----------------------------------------------------------------------------
+//----------------3. Detect cycle in an undirected graph (Bfs)
 
 //        Example - 1
         int [][] adlForDetectCycle = new int[][]{{1}, {0, 2, 4}, {1, 3}, {2, 4}, {1, 3}};
@@ -56,7 +65,10 @@ public class Main {
         vertices = 4;
         detectCycle(adlForDetectCycle, vertices);
 
-//       ------------------------
+
+//----------------------------------------------------------------------------
+//        4. Surrounding region (Dfs)
+
         System.out.println("\n\n4. Surrounded Region ");
 //        Input: board = [["X","X","X","X"],["X","O","O","X"],["X","X","O","X"],["X","O","X","X"]]
 //        Output: [["X","X","X","X"],["X","X","X","X"],["X","X","X","X"],["X","O","X","X"]]
@@ -69,20 +81,149 @@ public class Main {
         char[][] board = new char[][]{{'X','X','X','X'},{'X','O','O','X'},{'X','X','O','X'},{'X','O','X','X'}};
         surroundedRegion(board);
 
+
+//----------------------------------------------------------------------------
 //        5. Flood fill algorithm using dfs
         floodFill();
-//        6. Detect cycle in Directed graph
+
+
+//----------------------------------------------------------------------------
+//        6. Detect Cycle in Directed graph
         detectCycleInDirectedGraph();
-//        7. Topological Sort
+
+
+//----------------------------------------------------------------------------
+//        7. Toppological Sort (DFS)
         topoSort();
+
+
+//----------------------------------------------------------------------------
+//        8. Kahn's algorithm (BFS)
+        kahnsAlgorith();
+
+//----------------------------------------------------------------------------
+//        9. Shortest path finding in Undirected Graph (Using BFS - > Dijkstra Algarithm ) unit weight (always weight - 1)
+
+        shortestPathInUndirectedGraph();
 
 
     }
 
+    private static void shortestPathInUndirectedGraph() {
+ /*       Pre-requisite
+                --------------
+        1. Queue DS
+        2. Dis array[] of size n
+        3. Adj List
+        [0,1] [0,3] [3,4] [4,5] [5,6] [1,2] [2,6] [6,7] [7,8] [6,8]
+        n = 9, m=10 start = 0
+  */
+        int n = 9;
+        int start = 0;
+        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
+        for(int i=0; i<n; i++){
+            adj.add(new ArrayList<>());
+        }
+        adj.get(0).add(1);adj.get(0).add(3);adj.get(3).add(4);adj.get(4).add(5);adj.get(5).add(6);
+        adj.get(1).add(2);adj.get(2).add(6);adj.get(6).add(7);adj.get(7).add(8);adj.get(6).add(8);
+        adj.get(1).add(0);adj.get(3).add(0);adj.get(4).add(3);adj.get(5).add(4);adj.get(6).add(5);
+        adj.get(2).add(1);adj.get(6).add(2);adj.get(7).add(6);adj.get(8).add(7);adj.get(8).add(6);
+
+        int dis[] = new int[n];
+        for (int i=0; i<n; i++) dis[i] = (int)1e9;
+        dis[start] = 0;
+
+        Queue<Integer> q =new LinkedList<>();
+        q.offer(start);
+        while (!q.isEmpty()){
+            int node = q.poll();
+            for (int k : adj.get(node)){
+                if (dis[node]+1  < dis[k] ){
+                    dis[k] = 1+dis[node];
+                    q.offer(k);
+                }
+            }
+        }
+
+        System.out.println("Find Shortest Path in Undirected Graph \nAdj List : "+ adj);
+        System.out.println("The Edges :  [0,1] [0,3] [3,4] [4,5] [5,6] [1,2] [2,6] [6,7] [7,8] [6,8]");
+        System.out.print("The shoertest paths : ");
+        for (int i=0; i<n; i++){
+            if (dis[i] == 1e9){
+                System.out.print(-1 +" ");
+            }else {
+                System.out.print(dis[i]+" ");
+            }
+        }
+    }
+
+    private static void kahnsAlgorith() {
+/*       Pre-requisite
+         --------------
+        1. Queue DS
+        2. Indegree array[] of size n
+        3. Adj List
+            [2, 3]
+            [3, 1]
+            [4, 0]
+            [4, 1]
+            [5, 0]
+            [5, 2]
+            Vertices = 6
+
+         Logic
+         -----
+         1. Find indegree of each node in adj list
+         2. Traverse on indegree[] if it's 0 the add that **index to Q
+         3. Start - BFS
+         4. remove from q and add to ansList and check that node in adj List
+                reduce indegree of the node index from adj List
+                and check if it is 0 then add to Q
+            End BFs
+         5. Print ans list
+        */
+        int v = 6;
+        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
+        for (int i=0; i<v; i++){
+            adj.add(new ArrayList<>());
+        }
+        adj.get(2).add(3);adj.get(3).add(1);adj.get(4).add(0);
+        adj.get(4).add(1);adj.get(5).add(0);adj.get(5).add(2);
+
+        Queue<Integer> q =new LinkedList<>();
+        int[] indegree = new int[v];
+
+//        Find how many indegree are in the adj List
+        for(int i=0; i<v; i++){
+            for (int k : adj.get(i)){
+                indegree[k]++;
+            }
+        }
+//        If indegree is  0 the add to Q
+        for (int i = 0; i < v; i++) {
+            if (indegree[i] == 0) {
+                q.add(i);
+            }
+        }
+        ArrayList<Integer> ans = new ArrayList<>();
+        while (!q.isEmpty()){
+            int node = q.poll();
+            ans.add(node);
+            for (int k: adj.get(node)){
+                indegree[k]--;
+                if (indegree[k] == 0){
+                    q.offer(k);
+                    }
+            }
+        }
+        System.out.println("\n\nKahn's Alogorithm (DAG) : ");
+        System.out.println("QNS : "+ adj);
+        System.out.println("ANS : "+ans +"\n");
+
+    }
 
 
-
-//  1. Breadth First Search
+    //  1. Breadth First Search
     public static List<Integer> bfs (boolean visited[], ArrayList<ArrayList<Integer>> adj){
 
         Queue<Integer>  q = new LinkedList<>();
