@@ -105,6 +105,125 @@ public class Main {
 //        9. Shortest path finding in Undirected Graph (Using BFS - > Dijkstra Algarithm ) unit weight (always weight - 1)
 
         shortestPathInUndirectedGraph();
+        
+//        10 Dijkstra Algorith  (SP - Weighted Undirected graph) Memiozation
+        dijkstraAlgorithm();
+        
+//        11 Bellman Ford  (SP) (directed and undirected graph) 
+        bellmanFordAlgarithm();
+
+
+    }
+
+    private static void bellmanFordAlgarithm() {
+        System.out.println("\n\n11. Bellman Ford Shortuest path algorithm");
+        /*
+        1.Distance array
+        I/p :  [[0, 1, -1], [1, 0, 3], [1, 2, 4], [2, 0, 3]]
+        n  =3
+        src =0
+        */
+        int n = 3;
+        int src = 0;
+        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
+        adj.add(new ArrayList<>(List.of(0, 1, -1)));
+        adj.add(new ArrayList<>(List.of(1, 0, 3)));
+        adj.add(new ArrayList<>(List.of(1, 2, 4)));
+        adj.add(new ArrayList<>(List.of(2, 0, 3)));
+        int dis[] = new int[n];
+        for (int i=0; i<n; i++) dis[i] = (int) 1e9;
+        dis[src] = 0;
+        for(int i=0; i<n; i++){
+            for(ArrayList<Integer> k : adj){
+                int u = k.get(0);
+                int v = k.get(1);
+                int wt = k.get(2);
+//                Do Relaxation
+                if(dis[u] != (int)1e9 && dis[u] + wt < dis[v]) {
+                    dis[v] = dis[u] + wt;
+                }
+            }
+        }
+//        Find the negative cycle
+        for(ArrayList<Integer> k : adj){
+            int u = k.get(0);
+            int v = k.get(1);
+            int wt = k.get(2);
+//                Do Relaxation
+            if(dis[u] != (int)1e9 && dis[u] + wt < dis[v]) {
+               System.out.println("This Graph has Negative Cycle ");
+               break;
+            }
+        }
+        System.out.println("It shortest path is : ");
+        for (int i=0; i<n; i++){
+            System.out.print(dis[i] +" ");
+        }
+    }
+
+    private static void dijkstraAlgorithm() {
+
+        System.out.println("\n10. Dijkstra Algorithm");
+
+        /*
+            PRE-REQUISITE
+            -------------
+            1. Priority Queue
+            2. Distance [] array
+            3. Memoization array [] (named as Parent)
+            4. adj with weighted
+            input : [[[1, 9]], [[0, 9]]] v=2, src=0
+            o/p : [0,9]
+        */
+
+        int v = 2;
+        int src =0;
+        ArrayList<ArrayList<ArrayList<Integer>>> adj = new ArrayList<>();
+
+        ArrayList<ArrayList<Integer>> innerList1 = new ArrayList<>();
+        innerList1.add(new ArrayList<>(Arrays.asList(1, 9)));
+        adj.add(innerList1);
+
+        ArrayList<ArrayList<Integer>> innerList2 = new ArrayList<>();
+        innerList2.add(new ArrayList<>(Arrays.asList(0, 9)));
+        adj.add(innerList2);
+
+        PriorityQueue<int[]> pq = new PriorityQueue<int[]>((x,y)->x[0] - y[0]);
+        int dis[] = new int[v];
+
+
+        for (int i=0; i<v; i++){
+            dis[i] = (int)1e9;
+        }
+        dis[src] = 0;
+        pq.offer(new int[]{0, src});
+        for(int i=0; i<adj.size(); i++){
+            for(int j=0; j<adj.get(i).size(); j++){
+                System.out.println(adj.get(i).get(j));
+            }
+        }
+        while (!pq.isEmpty()){
+            int elem[] = pq.poll();
+            int node = elem[1];
+            int distance = elem[0];
+
+            for (ArrayList<Integer> k: adj.get(node)){
+                int adjNode  = k.get(0);
+                int weight = k.get(1);
+                if(dis[adjNode] > weight+distance){
+                    dis[adjNode] = weight + distance;
+                    pq.offer(new int[]{weight+distance,adjNode});
+                }
+            }
+        }
+
+        System.out.println("Distance Array is : ");
+        for (int i=0; i<dis.length; i++){
+            System.out.print(dis[i] +" , ");
+        }
+        System.out.println("---------------------");
+
+
 
 
     }
