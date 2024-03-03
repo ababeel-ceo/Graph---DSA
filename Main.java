@@ -14,6 +14,9 @@
    7. Toppological Sort (DFS)
    8. Kahn's algorithm (BFS)
    9. Shortest path finding in Undirected Graph (Using BFS)
+   10. Dijkstra Algorith  (SP - Weighted Undirected graph) Memiozation
+   11. Bellford Ford Single Source Shortest Path Algorithm (DG & UG)
+   12. Floyd Warshall Multisource Shortest Path Algorithm
 
  */
 
@@ -112,7 +115,56 @@ public class Main {
 //        11 Bellman Ford  (SP) (directed and undirected graph) 
         bellmanFordAlgarithm();
 
+//        12 Floyd Warshall   (MSP) (directed and undirected graph)
+        floydWarshallMultiSourceSP();
 
+    }
+
+    private static void floydWarshallMultiSourceSP() {
+
+        /*
+            Input Matrix (graph):
+             { {0, 2, -1, -1},
+             {1, 0, 3, -1},{-1, -1, 0, -1},{3, 5, 4, 0} }
+
+        **/
+
+        System.out.println("\n\nInput Matrix (Graph) :   { {0, 2, -1, -1},\n" +
+                "        {1, 0, 3, -1},{-1, -1, 0, -1},{3, 5, 4, 0} }");
+        int matrix[][] = new int[][]  { {0, 2, -1, -1},
+                {1, 0, 3, -1},{-1, -1, 0, -1},{3, 5, 4, 0} };
+        int n = matrix.length;
+        for(int i=0; i<n; i++){
+            for(int j=0; j<n; j++){
+                if(matrix[i][j] == -1){
+                    matrix[i][j] = (int) 1e9;
+                }
+                if(i == j){
+                    matrix[i][j] =0;
+                }
+            }
+        }
+        for(int k =0; k<matrix.length; k++){
+            for(int i=0; i<matrix.length; i++){
+                for (int j=0; j<matrix.length; j++){
+                    matrix[i][j] = Math.min(matrix[i][j] , matrix[i][k] + matrix[k][j]);
+                }
+            }
+
+        }
+        for(int i=0; i<n; i++){
+            for(int j=0; j<n; j++){
+                if(matrix[i][j] == (int) 1e9){
+                    matrix[i][j] = -1;
+                }
+            }
+        }
+        System.out.println("Shortest path of the Graph is : ");
+        for (int i=0; i<matrix.length; i++){
+            for (int j=0; j<matrix.length; j++){
+                System.out.print(matrix[i][j]+" ");
+            }System.out.println();
+        }
     }
 
     private static void bellmanFordAlgarithm() {
