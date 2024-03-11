@@ -17,6 +17,7 @@
    10. Dijkstra Algorith  (SP - Weighted Undirected graph) Memiozation
    11. Bellford Ford Single Source Shortest Path Algorithm (DG & UG)
    12. Floyd Warshall Multisource Shortest Path Algorithm
+   13. Disjoint Set Union by Rank/Size
 
  */
 
@@ -108,17 +109,39 @@ public class Main {
 //        9. Shortest path finding in Undirected Graph (Using BFS - > Dijkstra Algarithm ) unit weight (always weight - 1)
 
         shortestPathInUndirectedGraph();
-        
+
 //        10 Dijkstra Algorith  (SP - Weighted Undirected graph) Memiozation
         dijkstraAlgorithm();
-        
+
 //        11 Bellman Ford  (SP) (directed and undirected graph) 
         bellmanFordAlgarithm();
 
 //        12 Floyd Warshall   (MSP) (directed and undirected graph)
         floydWarshallMultiSourceSP();
 
+//        13 Disjoint Set Union by Rank/Size
+        System.out.println("\n\n13. Disjoint Set by RANK / SIZE");
+        DisjointSet ds =  new DisjointSet(7);
+        ds.unionBySize(1, 2);
+        ds.unionBySize(2, 3);
+        ds.unionBySize(4, 5);
+        ds.unionBySize(6, 7);
+        ds.unionBySize(5, 6);
+        if( ds.findUltimateParent(3) == ds.findUltimateParent(7)){
+            System.out.println("Same");
+        }else {
+            System.out.println("Not Same");
+            ds.unionBySize(3, 7);
+            if( ds.findUltimateParent(3) == ds.findUltimateParent(7)){
+                System.out.println("Same");
+            }else {
+                System.out.println("Not Same");
+            }
+        }
+
     }
+
+
 
     private static void floydWarshallMultiSourceSP() {
 
