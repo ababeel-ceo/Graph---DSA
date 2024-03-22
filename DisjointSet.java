@@ -9,7 +9,7 @@ class DisjointSet{
     DisjointSet(int n){
         for (int i=0; i<=n; i++){
             parent.add(i);
-            size.add(0);
+            size.add(1);
             rank.add(0);
         }
     }
