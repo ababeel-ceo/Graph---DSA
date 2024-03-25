@@ -18,7 +18,8 @@
    11. Bellford Ford Single Source Shortest Path Algorithm (DG & UG)
    12. Floyd Warshall Multisource Shortest Path Algorithm
    13. Disjoint Set Union by Rank/Size
-   14. Making a large Island (Using DisjointSet)
+   14. Remove Stones
+   15. Bridges in a graph
 
  */
 
@@ -142,11 +143,64 @@ public class Main {
 
 //        14. Remove Stones
         removeStones();
+
+//        15. Bridges in a graph
+        findBridgesInGraph();
+
+
     }
 
+    private static void findBridgesInGraph() {
+//        Edges are
+        System.out.println("\n\n15. Find Bridges in a graph");
+        int n = 4;
+        int[][] edges = {
+                {0,1},{1,2},{2,0},{1,3}
+//                {0, 1}, {1, 2},
+//                {2, 0}, {1, 3}
+        };
+
+        List<List<Integer>> adj = new ArrayList<>();
+        for (int i=0;i<n; i++) adj.add(new ArrayList<>());
+        for(int i=0; i<n; i++) {
+            adj.get(edges[i][0]).add(edges[i][1]);
+            adj.get(edges[i][1]).add(edges[i][0]);
+        }
+
+        System.out.println("Trojen's Algo to find Bridges in an Undirected Graph\n Edges are :\n");
+        System.out.println(adj + " \nBridges are : \n");
+        boolean vis[] = new boolean[n];
+        int inTime[] = new int[n];
+        int lowTime[] = new int[n];
+        int[] timer = new int[1];
+        timer[0] = 0;
+        List<List<Integer>> bridges = new ArrayList<>();
+        dfsTrojensAlgoToFindBridges(0, -1, vis, inTime, lowTime, adj, bridges,timer);
+       System.out.println(bridges);
+
+    }
+
+    private static void dfsTrojensAlgoToFindBridges(int src, int par, boolean[] vis, int[] inTime, int[] lowTime,  List<List<Integer>> adj,  List<List<Integer>> bridges,int[] timer){
+        timer[0]++;
+        vis[src] = true;
+        lowTime[src] = inTime[src] = timer[0];
+        for (int adjNode : adj.get(src)){
+            if (adjNode == par) continue;
+            if (!vis[adjNode]){
+                dfsTrojensAlgoToFindBridges(adjNode, src, vis, inTime, lowTime, adj, bridges, timer);
+                lowTime[src] = Math.min(lowTime[adjNode], lowTime[src]);
+                if (lowTime[adjNode] > inTime[src]){
+                    bridges.add(Arrays.asList(adjNode, src));
+                }
+            }else {
+                lowTime[src] = Math.min(lowTime[adjNode], lowTime[src]);
+            }
+        }
+    }
     private static void removeStones() {
 //        1. {{0,1},{1,0},{1,1}} n=3
 //        2. {{0,1},{1,1}}  n=2
+        System.out.println("14. Remove Stones");
         int n = 2;
         int[][] stones = {
 //                {0, 0}, {0, 2},
