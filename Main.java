@@ -20,6 +20,7 @@
    13. Disjoint Set Union by Rank/Size
    14. Remove Stones
    15. Bridges in a graph
+   16. Account Merge
 
  */
 
@@ -147,7 +148,68 @@ public class Main {
 //        15. Bridges in a graph
         findBridgesInGraph();
 
+//        16, Account Merge
+        accountMerge();
 
+
+    }
+
+    private static void accountMerge() {
+
+        System.out.println("\n\n 16. Merge Account ");
+        List<List<String>> accounts = new ArrayList() {
+            {
+                add(new ArrayList<String>(Arrays.asList("John", "j1@com", "j2@com", "j3@com")));
+                add(new ArrayList<String>(Arrays.asList("John", "j4@com")));
+                add(new ArrayList<String>(Arrays.asList("Raj", "r1@com", "r2@com")));
+                add(new ArrayList<String>(Arrays.asList("John", "j1@com", "j5@com")));
+                add(new ArrayList<String>(Arrays.asList("Raj", "r2@com", "r3@com")));
+                add(new ArrayList<String>(Arrays.asList("Mary", "m1@com")));
+
+            }
+        };
+
+        int n = accounts.size();
+
+        DisjointSet ds = new DisjointSet(n);
+        HashMap<String, Integer> mailAndIndex = new HashMap<>();
+        for (int i=0; i<accounts.size(); i++){
+            for (int j=1; j<accounts.get(i).size(); j++){
+                String mail = accounts.get(i).get(j);
+                if(mailAndIndex.containsKey(mail)){
+                    ds.unionBySize(i, mailAndIndex.get(mail));
+                }else {
+                    mailAndIndex.put(mail, i);
+                }
+            }
+        }
+
+        ArrayList<String>[] mergeMail = new ArrayList[n];
+       for (int i=0;i<n; i++) mergeMail[i] = new ArrayList<>();
+       for (Map.Entry<String, Integer> k : mailAndIndex.entrySet()){
+            String mail = k.getKey();
+            int ulp = ds.findUltimateParent(k.getValue());
+            mergeMail[ulp].add(mail);
+       }
+        for (int i=0;i<n; i++) System.out.println(mergeMail[i]);
+
+        List<List<String>> ans = new ArrayList<>();
+        for (int i=0; i<n; i++){
+            if (mergeMail[i].size() == 0) continue;
+            Collections.sort(mergeMail[i]);
+            String mail = accounts.get(i).get(0);
+            List<String > temp = new ArrayList<>();
+            temp.add(mail);
+            for (String k : mergeMail[i]){
+                temp.add(k);
+            }
+            ans.add(temp);
+        }
+        System.out.println(ans);
+
+//        System.out.println(mailAndIndex);
+//        System.out.println(ds.size);
+//        System.out.println(ds.parent);
     }
 
     private static void findBridgesInGraph() {
