@@ -21,6 +21,7 @@
    14. Remove Stones
    15. Bridges in a graph
    16. Account Merge
+   17. Kosaraju's Algorithm for Strongly connected component
 
  */
 
@@ -151,7 +152,71 @@ public class Main {
 //        16, Account Merge
         accountMerge();
 
+//        17. Kosaraju's Algorithm for Strongly connected component
+        kosarajuAlgoForSCC();
 
+
+    }
+
+    private static void kosarajuAlgoForSCC() {
+//        adj = [[2, 3], [0], [1], [4], []]
+//        n = 5
+        int v = 5;
+        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
+        adj.add(new ArrayList<>(List.of(2, 3))); // Inner ArrayList 1
+        adj.add(new ArrayList<>(List.of(0)));    // Inner ArrayList 2
+        adj.add(new ArrayList<>(List.of(1)));    // Inner ArrayList 3
+        adj.add(new ArrayList<>(List.of(4)));    // Inner ArrayList 4
+        adj.add(new ArrayList<>());
+
+//        1. Sort according to the finishing time
+        boolean vis[] = new boolean[v];
+        Stack<Integer> st = new Stack<>();
+        for (int i=0; i<v; i++){
+            if(!vis[i]){
+                dfsForSCC(i, vis, st, adj);
+            }
+        }
+//        2. Reverse the graph
+        ArrayList<ArrayList<Integer>> rev = new ArrayList<>();
+        for (int i=0; i<v; i++) rev.add(new ArrayList<>());
+        for (int i=0; i<v; i++){
+            for (int adjNode : adj.get(i)){
+                rev.get(adjNode).add(i);
+            }
+        }
+//        3. Do normal dfs
+        vis = new boolean[v];
+        int scc =0;
+        for (int i=0; i<v; i++){
+            if (!vis[i]){
+                scc++;
+                dfsForSCC1(i, vis, rev);
+            }
+        }
+        System.out.println("\n\n17. Strongly Connected Component from the graph :  [[2, 3], [0], [1], [4], []] : is -> "+ scc);
+
+
+
+    }
+
+    private static void dfsForSCC1(int i, boolean[] vis, ArrayList<ArrayList<Integer>> rev) {
+        vis[i] = true;
+        for (int adjNode: rev.get(i)){
+            if (!vis[adjNode]){
+                dfsForSCC1(adjNode, vis, rev);
+            }
+        }
+    }
+
+    private static void dfsForSCC(int node, boolean[] vis, Stack<Integer> st, ArrayList<ArrayList<Integer>> adj){
+        vis[node] = true;
+        for (int adjNode: adj.get(node)){
+            if (!vis[adjNode]){
+                dfsForSCC(adjNode, vis, st, adj);
+            }
+        }
+        st.push(node);
     }
 
     private static void accountMerge() {
