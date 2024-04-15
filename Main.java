@@ -155,6 +155,13 @@ public class Main {
 //        17. Kosaraju's Algorithm for Strongly connected component
         kosarajuAlgoForSCC();
 
+//        Dynamic Programming
+        DynamicProgramming dynamicProgramming = new DynamicProgramming();
+
+//        Recursion
+        Recursion rec = new Recursion();
+        rec.printAllSubSequence();
+
 
     }
 
